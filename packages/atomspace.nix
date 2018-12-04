@@ -19,18 +19,12 @@ stdenv.mkDerivation rec {
     cxxtest
   ];
 
-  GUILE_LIBRARY = "${guile}/lib";
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
-
-  GMP_LIBRARY = "${gmp}/lib";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
   cmakeFlags = [
-    ''-DGMP_LIBRARY:PATH=${GMP_LIBRARY}''
-    ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
-
-    ''-DGUILE_LIBRARY:PATH=${GUILE_LIBRARY}''
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
+    ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
   ];
 
   # doCheck = true;
