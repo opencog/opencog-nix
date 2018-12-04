@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
     (import ./cogutil.nix { inherit pkgs; })
     guile gmp
     python
+    python27Packages.cython
     cxxtest
   ];
 
