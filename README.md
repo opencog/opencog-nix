@@ -4,7 +4,7 @@ This is a collection of WIP nix package manager builds for opencog packages.
 # Usage
 ```bash
 cd <package-name> # e.g. cogutil
-nix-shell # `--run 'zsh'`
+nix-shell # --run 'zsh'
 ```
 
 # License
