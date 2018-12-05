@@ -10,44 +10,46 @@ stdenv.mkDerivation rec {
     sha256 = "1skcj3b1mcrnlnhwkdgz9yqj27adgsy4arpl8mwvdbcjh3w1ghiv";
   };
 
+  cogutil = (import ./cogutil.nix { inherit pkgs; });
+
   nativeBuildInputs = [
     cmake
     boost166
-    (import ./cogutil.nix { inherit pkgs; })
+    cogutil
     (import ./atomspace.nix { inherit pkgs; })
     guile gmp
+    # cxxtest # path CXXTEST_BIN_DIR
+
     python
-    cxxtest
+    python27Packages.cython
+
     pkgconfig
-    blas
+    # blas
     libuuid
     # laplack
     # cpprest
     # gtk3
     # cheev_
-    python27Packages.cython
     # valgrind # path VALGRIND_INCLUDE_DIR
     # octomap
-    protobuf
-    zeromq
-    jsoncpp
+    # protobuf
+    # zeromq
+    # jsoncpp
 
     # link-grammar
     # moses
   ];
 
-  GUILE_LIBRARY = "${guile}/lib";
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
-
-  GMP_LIBRARY = "${gmp}/lib";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
+  DDATADIR = "${cogutil.src}";
+
   cmakeFlags = [
-    ''-DGMP_LIBRARY:PATH=${GMP_LIBRARY}''
+    ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
 
-    ''-DGUILE_LIBRARY:PATH=${GUILE_LIBRARY}''
-    ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
+    ''-DDATADIR:PATH=${DDATADIR}''
   ];
 
   # doCheck = true;
