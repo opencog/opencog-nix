@@ -18,8 +18,9 @@ stdenv.mkDerivation rec {
     gcc test.c -o test -ldl
     ./test
 
-    # guile \
-    # -L ${atomspace}/share/opencog/scm \
-    # -l ${atomspace}/examples/atomspace/basic.scm \
+    guile \
+    -L ${atomspace}/share/opencog/scm \
+    -l ${atomspace.src}/examples/atomspace/basic.scm \
+    # enter: ,apropos cog
   '';
 }
