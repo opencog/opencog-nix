@@ -43,14 +43,18 @@ stdenv.mkDerivation rec {
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
-  DDATADIR = "${cogutil.src}";
-
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
-
-    ''-DDATADIR:PATH=${DDATADIR}''
   ];
+
+  patchPhase = ''
+    mkdir -p $out/share/opencog
+    cp -r ${cogutil.src}/cmake $out/share/opencog/
+  '';
+
+  # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/move-lib64.sh#L6
+  dontMoveLib64 = 1;
 
   # doCheck = true;
   # checkTarget = "test";
