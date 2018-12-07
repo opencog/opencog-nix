@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
   ];
 
   shellHook = ''
-    export LTDL_LIBRARY_PATH="${atomspace}/lib/opencog"
+    export LD_LIBRARY_PATH="${atomspace}/lib/opencog"
 
     gcc test.c -o test -ldl
     ./test
