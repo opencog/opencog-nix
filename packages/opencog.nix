@@ -18,34 +18,37 @@ stdenv.mkDerivation rec {
     cogutil
     (import ./atomspace.nix { inherit pkgs; })
     guile gmp
-    # cxxtest # path CXXTEST_BIN_DIR
-
     python
     python27Packages.cython
-
     pkgconfig
-    # blas
     libuuid
-    # laplack
-    # cpprest
-    # gtk3
-    # cheev_
-    # valgrind # path VALGRIND_INCLUDE_DIR
-    # octomap
-    # protobuf
-    # zeromq
-    # jsoncpp
-
-    # link-grammar
-    # moses
+    cxxtest
+    gtk3
+    pcre
+    xorg.libpthreadstubs
+    blas
+    liblapack
+    valgrind
+    protobuf
+    jsoncpp
+    stack
+    tbb
+    doxygen
+    graphviz
   ];
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
+  VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
+  CXXTEST_BIN_DIR = "${cxxtest}/bin";
+
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
+
+    ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
+    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
   ];
 
   patchPhase = ''
