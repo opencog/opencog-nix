@@ -37,18 +37,16 @@ stdenv.mkDerivation rec {
     graphviz
   ];
 
+  CXXTEST_BIN_DIR = "${cxxtest}/bin";
+
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
-
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
-  CXXTEST_BIN_DIR = "${cxxtest}/bin";
 
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
-
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
-    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
   ];
 
   patchPhase = ''
