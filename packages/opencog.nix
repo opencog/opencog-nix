@@ -11,30 +11,39 @@ stdenv.mkDerivation rec {
   };
 
   cogutil = (import ./cogutil.nix { inherit pkgs; });
+  atomspace = (import ./atomspace.nix { inherit pkgs; });
 
   nativeBuildInputs = [
     cmake
-    boost166
     cogutil
-    (import ./atomspace.nix { inherit pkgs; })
-    guile gmp
-    python
-    python27Packages.cython
-    pkgconfig
-    libuuid
-    cxxtest
-    gtk3
-    pcre
+    atomspace
     xorg.libpthreadstubs
+    boost166
+    # cpprest # not in nixpkgs
+    cxxtest
+    pkgconfig
+    pcre
+    # xdmcp # not in nixpkgs; required by xcb, xdmcp.pc dir to PKG_CONFIG_PATH
+    gtk3
+    guile
+    gmp # dep of guile
+    # dgemm_ # ?
     blas
     liblapack
-    valgrind
+    # link-grammar
+    libuuid
+    # moses
+    # octomap
     protobuf
+    python
+    python27Packages.cython
+    tbb
+    valgrind
+    # zeromq #ZMQ_LIBRARY
     jsoncpp
     stack
-    tbb
     doxygen
-    graphviz
+    graphviz # doxygen dot
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
