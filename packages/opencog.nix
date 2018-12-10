@@ -12,6 +12,7 @@ stdenv.mkDerivation rec {
 
   cogutil = (import ./cogutil.nix { inherit pkgs; });
   atomspace = (import ./atomspace.nix { inherit pkgs; });
+  link-grammar = (import ./link-grammar.nix { inherit pkgs; });
 
   nativeBuildInputs = [
     cmake
@@ -30,7 +31,7 @@ stdenv.mkDerivation rec {
     # dgemm_ # ?
     blas
     liblapack
-    # link-grammar
+    link-grammar
     libuuid
     # moses
     # octomap
