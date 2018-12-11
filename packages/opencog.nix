@@ -36,8 +36,8 @@ stdenv.mkDerivation rec {
     # moses
     # octomap
     protobuf
-    python
-    python27Packages.cython
+    python3
+    python3Packages.cython
     tbb
     valgrind
     # zeromq #ZMQ_LIBRARY
