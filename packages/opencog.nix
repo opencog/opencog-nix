@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
   atomspace = (import ./atomspace.nix { inherit pkgs; });
   link-grammar = (import ./link-grammar.nix { inherit pkgs; });
 
+  octomap = (import ./other/octomap.nix { inherit pkgs; });
+
   nativeBuildInputs = [
     cmake
     cogutil
@@ -23,14 +25,12 @@ stdenv.mkDerivation rec {
     cxxtest
     pkgconfig
     pcre
-    # xdmcp # not in nixpkgs; required by xcb, xdmcp.pc dir to PKG_CONFIG_PATH
     guile
     gmp # dep of guile
-    # dgemm_ # ?
     link-grammar
     libuuid
     # moses
-    # octomap
+    octomap
     python3
     python3Packages.cython
     valgrind
