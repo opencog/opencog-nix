@@ -18,33 +18,25 @@ stdenv.mkDerivation rec {
     cmake
     cogutil
     atomspace
-    xorg.libpthreadstubs
     boost166
     # cpprest # not in nixpkgs
     cxxtest
     pkgconfig
     pcre
     # xdmcp # not in nixpkgs; required by xcb, xdmcp.pc dir to PKG_CONFIG_PATH
-    gtk3
     guile
     gmp # dep of guile
     # dgemm_ # ?
-    blas
-    liblapack
     link-grammar
     libuuid
     # moses
     # octomap
-    protobuf
     python3
     python3Packages.cython
-    tbb
     valgrind
     # zeromq #ZMQ_LIBRARY
-    jsoncpp
     stack
     doxygen
-    graphviz # doxygen dot
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
