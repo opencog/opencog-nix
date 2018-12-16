@@ -16,6 +16,7 @@ stdenv.mkDerivation rec {
   moses = (import ./moses.nix { inherit pkgs; });
 
   octomap = (import ./other/octomap.nix { inherit pkgs; });
+  cpprest = (import ./other/cpprest.nix { inherit pkgs; });
 
   nativeBuildInputs = [
     cmake
@@ -38,6 +39,11 @@ stdenv.mkDerivation rec {
     # zeromq #ZMQ_LIBRARY
     stack
     doxygen
+
+    
+    cpprest # will be removed with the new pattern miner
+    openssl # required by cpprest
+    
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
@@ -46,10 +52,14 @@ stdenv.mkDerivation rec {
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
 
+  cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
+  cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
+
+    ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
 
   patchPhase = ''
