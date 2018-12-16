@@ -36,17 +36,18 @@ stdenv.mkDerivation rec {
     python3
     python3Packages.cython
     valgrind
-    # zeromq #ZMQ_LIBRARY
     stack
     doxygen
 
     
     cpprest # will be removed with the new pattern miner
     openssl # required by cpprest
-    
+
+    zeromq
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
+  ZMQ_LIBRARY="${zeromq}/lib/libzmq.so";
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
