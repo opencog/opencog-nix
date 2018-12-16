@@ -13,6 +13,7 @@ stdenv.mkDerivation rec {
   cogutil = (import ./cogutil.nix { inherit pkgs; });
   atomspace = (import ./atomspace.nix { inherit pkgs; });
   link-grammar = (import ./link-grammar.nix { inherit pkgs; });
+  moses = (import ./moses.nix { inherit pkgs; });
 
   octomap = (import ./other/octomap.nix { inherit pkgs; });
 
@@ -29,7 +30,7 @@ stdenv.mkDerivation rec {
     gmp # dep of guile
     link-grammar
     libuuid
-    # moses
+    moses
     octomap
     python3
     python3Packages.cython
