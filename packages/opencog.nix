@@ -19,48 +19,54 @@ stdenv.mkDerivation rec {
   cpprest = (import ./other/cpprest.nix { inherit pkgs; });
 
   nativeBuildInputs = [
-    cmake
+    cmake boost166
     cogutil
     atomspace
-    boost166
-    # cpprest # not in nixpkgs
-    cxxtest
-    pkgconfig
-    pcre
     guile
     gmp # dep of guile
     link-grammar
     libuuid
-    moses
     octomap
+
+    #optional:
+    moses
     python3
     python3Packages.cython
+    cxxtest
+    pkgconfig
+    pcre
     valgrind
     stack
     doxygen
 
-    
-    cpprest # will be removed with the new pattern miner
-    openssl # required by cpprest
+    # deprecated or soon to be:
+    # cpprest # will be removed with the new pattern miner
+    # openssl # required by cpprest
 
-    zeromq
+    # zeromq
+    # jsoncpp
+    # protobuf
+    # blas
+    # liblapack
+    # gtk3
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
-  ZMQ_LIBRARY="${zeromq}/lib/libzmq.so";
+  # ZMQ_LIBRARY="${zeromq}/lib/libzmq.so";
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
 
-  cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
-  cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
+  # cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
+  # cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
+
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
 
-    ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
+    # ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
 
   patchPhase = ''
