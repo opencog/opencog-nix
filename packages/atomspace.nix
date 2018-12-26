@@ -14,8 +14,8 @@ stdenv.mkDerivation rec {
     cmake boost166
     (import ./cogutil.nix { inherit pkgs; })
     guile gmp
-    python
-    python27Packages.cython
+    python3
+    python3Packages.cython
     cxxtest
   ];
 
