@@ -6,7 +6,7 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = "https://github.com/Microsoft/cpprestsdk.git";
     rev = "65267c6e83e7e29ed3bdddde13d2c4bbb10e1bff";
-    sha256 = "0xjzlk2q7ms2y2fbl3kna73iv51h6gzdd5gnsdjf390kna7pvza8";
+    sha256 = "0ckfy94v7x60h4k8ypwg5apld3x8svhqz8v2z5j9qj53czkr06kb";
     deepClone = true;
   };
 
