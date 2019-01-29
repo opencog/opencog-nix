@@ -10,10 +10,21 @@ stdenv.mkDerivation rec {
     sha256 = "0l1j2g9flrqczc4nr3i2nyzy7p1qy0mmcjaxm6wxnsn8gvs9lqgy";
   };
 
-  nativeBuildInputs = [ cmake boost166 ];
+  nativeBuildInputs = [
+    cmake
+    boost166
+    cxxtest
+  ];
 
-  # doCheck = true;
-  # checkTarget = "test";
+  CXXTEST_BIN_DIR = "${cxxtest}/bin";
+  CPLUS_INCLUDE_PATH = "${cxxtest.src}";
+
+  cmakeFlags = [
+    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
+    ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
+  ];
+
+  doCheck = true;
 
   meta = with stdenv.lib; {
     description = "Very low-level C++ programming utilities used by several components";
