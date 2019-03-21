@@ -1,4 +1,4 @@
-{ config, pkgs }: with pkgs;
+{ pkgs }: with pkgs;
 
 stdenv.mkDerivation rec {
   name = "cogutil";
@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "cogutil";
-    rev = "be725eed573d7b083c575d937606e0db8a3e1c64";
-    sha256 = "1hlpnwx04wc2b9hprw67vxak9275ngiqyr80vfva8jf0fxvw8w70";
+    rev = "e3eca79143975cd930f3ba58a89ba143189205e9";
+    sha256 = "0l1j2g9flrqczc4nr3i2nyzy7p1qy0mmcjaxm6wxnsn8gvs9lqgy";
   };
 
   nativeBuildInputs = [
@@ -23,12 +23,6 @@ stdenv.mkDerivation rec {
     ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
     ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
   ];
-
-  osReleasePath = config.environment.etc.os-release.source;
-  patchPhase = ''
-    sed -i -e 's=/etc/os-release=${osReleasePath}=g' $(find . -type f)
-  '';
-
 
   doCheck = true;
 
