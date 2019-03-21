@@ -1,22 +1,22 @@
-{ pkgs }: with pkgs;
-
+{ pkgs, config }: with pkgs;
 stdenv.mkDerivation rec {
   name = "atomspace";
 
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "atomspace";
-    rev = "fddaf5426c3f1d379c4a92c7fd396e9736551ad1";
-    sha256 = "1kblvgc2ryjjh9fac1p2r00mh0ak855i1fcswn3ria5l8v8ndy0q";
+    rev = "3ed32869896c43d7490115e558db48174315bf39";
+    sha256 = "1ki5rpqn4kychbr238b5j3xl610frvjmfisf8bn3vqhwdsh7x03q";
   };
 
   nativeBuildInputs = [
     cmake boost166
-    (import ./cogutil.nix { inherit pkgs; })
+    (import ./cogutil.nix { inherit pkgs; inherit config;})
     guile gmp
     python3
     python3Packages.cython
     cxxtest
+    postgresql
   ];
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
