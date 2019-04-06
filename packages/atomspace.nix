@@ -43,6 +43,8 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
+
+    sed -i -e "s=/usr/local/share/opencog/scm=$out/share/opencog/scm=g" $(find . -type f)
   '';
 
   # doCheck = true;
