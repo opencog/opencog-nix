@@ -45,7 +45,7 @@ stdenv.mkDerivation rec {
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
   '';
 
-  doCheck = true;
+  # doCheck = true;
 
   meta = with stdenv.lib; {
     description = "The OpenCog hypergraph database, query system and rule engine";
