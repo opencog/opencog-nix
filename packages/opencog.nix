@@ -58,6 +58,8 @@ stdenv.mkDerivation rec {
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
 
+  GUILE_SITE_DIR="share/guile/site";
+
   # cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
   # cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
 
@@ -65,6 +67,8 @@ stdenv.mkDerivation rec {
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
+
+    ''-DGUILE_SITE_DIR:PATH=${GUILE_SITE_DIR}''
 
     # ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
@@ -78,7 +82,6 @@ stdenv.mkDerivation rec {
   dontMoveLib64 = 1;
 
   # doCheck = true;
-  # checkTarget = "test";
 
   meta = with stdenv.lib; {
     description = "A framework for integrated Artificial Intelligence & Artificial General Intelligence (AGI)";
