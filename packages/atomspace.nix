@@ -1,4 +1,4 @@
-{ pkgs, config }: with pkgs;
+{ pkgs }: with pkgs;
 stdenv.mkDerivation rec {
   name = "atomspace";
 
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake boost166
-    (import ./cogutil.nix { inherit pkgs; inherit config;})
+    (import ./cogutil.nix { inherit pkgs; })
     guile gmp
     python3
     python3Packages.cython
