@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "opencog";
-    rev = "7d8862eb1dfa459ca9d5a3248cd28d928496dc5c";
-    sha256 = "1skcj3b1mcrnlnhwkdgz9yqj27adgsy4arpl8mwvdbcjh3w1ghiv";
+    rev = "cf188947294f48a5473f87adaf34250e9bcca4ef";
+    sha256 = "1ngh0nal1khchmd8x4b8m2c4b7p53x6ih253k4hnif0q2pqfldpn";
   };
 
   cogutil = (import ./cogutil.nix { inherit pkgs; });
@@ -58,6 +58,8 @@ stdenv.mkDerivation rec {
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
 
+  GUILE_SITE_DIR="share/guile/site";
+
   # cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
   # cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
 
@@ -66,19 +68,20 @@ stdenv.mkDerivation rec {
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
 
+    ''-DGUILE_SITE_DIR:PATH=${GUILE_SITE_DIR}''
+
     # ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
 
   patchPhase = ''
     mkdir -p $out/share/opencog
-    cp -r ${cogutil.src}/cmake $out/share/opencog/
+    cp -r ${atomspace.src}/cmake $out/share/opencog/
   '';
 
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/move-lib64.sh#L6
   dontMoveLib64 = 1;
 
   # doCheck = true;
-  # checkTarget = "test";
 
   meta = with stdenv.lib; {
     description = "A framework for integrated Artificial Intelligence & Artificial General Intelligence (AGI)";

@@ -1,5 +1,5 @@
 { pkgs }: with pkgs;
-
+with import <nixpkgs/nixos> {};
 stdenv.mkDerivation rec {
   name = "cogutil";
 
