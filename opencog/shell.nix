@@ -19,7 +19,8 @@ stdenv.mkDerivation rec {
     ./test
 
     guile \
-    -L ${atomspace}/share/opencog/scm \
+    -L ${atomspace}/build \
+    -L ${atomspace.src}/opencog/scm \
     -l ${atomspace.src}/examples/atomspace/basic.scm \
     # enter: ,apropos cog
   '';

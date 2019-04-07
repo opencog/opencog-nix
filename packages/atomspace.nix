@@ -47,6 +47,13 @@ stdenv.mkDerivation rec {
     sed -i -e "s=/usr/local/share/opencog/scm=$out/share/opencog/scm=g" $(find . -type f)
   '';
 
+  postBuild = ''
+    ATOM_TYPES_DIR="build/opencog/atoms/atom_types"
+    mkdir -p $out/$ATOM_TYPES_DIR
+    cp ../$ATOM_TYPES_DIR/core_types.scm $out/$ATOM_TYPES_DIR
+    ls -R $out/build
+  '';
+
   # doCheck = true;
 
   meta = with stdenv.lib; {
