@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  link-grammar = import ../packages/link-grammar.nix { inherit pkgs; };
+  link-grammar = import ../packages/link-grammar.nix {};
 
   buildInputs = [
     link-grammar

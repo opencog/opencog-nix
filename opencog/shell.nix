@@ -4,8 +4,8 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  atomspace = import ../packages/atomspace.nix { inherit pkgs; };
-  opencog = import ../packages/opencog.nix { inherit pkgs; };
+  atomspace = import ../packages/atomspace.nix {};
+  opencog = import ../packages/opencog.nix {};
 
   buildInputs = [
     guile

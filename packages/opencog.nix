@@ -1,4 +1,4 @@
-{ pkgs }: with pkgs;
+{ pkgs ? import <nixpkgs> {} }: with pkgs;
 
 stdenv.mkDerivation rec {
   name = "opencog";
@@ -10,13 +10,13 @@ stdenv.mkDerivation rec {
     sha256 = "1ngh0nal1khchmd8x4b8m2c4b7p53x6ih253k4hnif0q2pqfldpn";
   };
 
-  cogutil = (import ./cogutil.nix { inherit pkgs; });
-  atomspace = (import ./atomspace.nix { inherit pkgs; });
-  link-grammar = (import ./link-grammar.nix { inherit pkgs; });
-  moses = (import ./moses.nix { inherit pkgs; });
+  cogutil = (import ./cogutil.nix {});
+  atomspace = (import ./atomspace.nix {});
+  link-grammar = (import ./link-grammar.nix {});
+  moses = (import ./moses.nix {});
 
-  octomap = (import ./other/octomap.nix { inherit pkgs; });
-  cpprest = (import ./other/cpprest.nix { inherit pkgs; });
+  octomap = (import ./other/octomap.nix {});
+  cpprest = (import ./other/cpprest.nix {});
 
   nativeBuildInputs = [
     cmake boost166

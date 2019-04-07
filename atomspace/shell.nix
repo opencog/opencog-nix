@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  atomspace = import ../packages/atomspace.nix { inherit pkgs; };
+  atomspace = import ../packages/atomspace.nix {};
 
   buildInputs = [
     atomspace

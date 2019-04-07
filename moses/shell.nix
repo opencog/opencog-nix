@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  moses = import ../packages/moses.nix { inherit pkgs; };
+  moses = import ../packages/moses.nix {};
 
   buildInputs = [
     moses

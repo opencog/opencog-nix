@@ -1,4 +1,4 @@
-{ pkgs }: with pkgs;
+{ pkgs ? import <nixpkgs> {} }: with pkgs;
 
 stdenv.mkDerivation rec {
   name = "moses";
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
     sha256 = "0v87p18j5kv0f0ywk7ad8x3m5df452lx9j92hqgn579h8w0v6452";
   };
 
-  cogutil = (import ./cogutil.nix { inherit pkgs; });
+  cogutil = (import ./cogutil.nix {});
 
   nativeBuildInputs = [
     cmake boost166

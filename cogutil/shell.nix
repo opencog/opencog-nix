@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  cogutil = import ../packages/cogutil.nix { inherit pkgs; };
+  cogutil = import ../packages/cogutil.nix {};
 
   buildInputs = [
     cogutil
