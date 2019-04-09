@@ -45,7 +45,13 @@ stdenv.mkDerivation rec {
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
 
-    sed -i -e "s=/usr/local/share/opencog/scm=$out/share/opencog/scm=g" $(find . -type f)
+    sed -i -e "s=/usr/local/share/opencog/scm=${src}/opencog/scm=g" $(find . -type f)
+
+    ${import ../init-psql-db.nix} # prepare psql
+    createdb opencog_test # create test database
+    psql -c "CREATE USER opencog_tester WITH PASSWORD 'cheese';" # create test user
+    # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
+    cat ${src}/opencog/persist/sql/multi-driver/atom.sql | psql opencog_test -U opencog_tester
   '';
 
   postBuild = ''
