@@ -18,10 +18,8 @@ stdenv.mkDerivation rec {
     gcc test.c -o test -ldl
     ./test
 
-    guile \
-    -L ${atomspace}/build \
-    -L ${atomspace.src}/opencog/scm \
-    -l ${atomspace.src}/examples/atomspace/basic.scm \
+    export GUILE_LOAD_PATH="${atomspace}/build:${atomspace.src}/opencog/scm"
     # enter: ,apropos cog
+    guile -l ${atomspace.src}/examples/atomspace/basic.scm
   '';
 }
