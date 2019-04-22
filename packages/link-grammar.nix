@@ -22,13 +22,16 @@ stdenv.mkDerivation rec {
     flex
     graphviz
     zlib
-    python3
-
-    ncurses # needed for python bindings..
   ];
 
-  patchPhase = ''
+  configurePhase =''
     ./autogen.sh
+    ./configure --prefix=$out
+  '';
+
+  installPhase = ''
+    mkdir -p $out
+    make install
   '';
 
 #  checkPhase = ''
