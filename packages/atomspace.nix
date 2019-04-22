@@ -59,9 +59,21 @@ stdenv.mkDerivation rec {
     mkdir -p $out/$ATOM_TYPES_DIR
     cp ../$ATOM_TYPES_DIR/core_types.scm $out/$ATOM_TYPES_DIR
     ls -R $out/build
+
+    # TODO: do with patchelf
+    mkdir early_lib
+    cp $(find . -name "*.so") early_lib
+    ls -R early_lib
+
+    THIS_DIR=$(pwd)
+    export GUILE_LOAD_PATH="$out/build:${src}/opencog/scm"
+    export LD_LIBRARY_PATH="$THIS_DIR/early_lib"
+
+    mkdir .cache
+    export XDG_CACHE_HOME=$THIS_DIR/.cache
   '';
 
-  # doCheck = true;
+  doCheck = true;
 
   meta = with stdenv.lib; {
     description = "The OpenCog hypergraph database, query system and rule engine";
