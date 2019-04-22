@@ -3,11 +3,12 @@
 stdenv.mkDerivation rec {
   name = "cpprest";
 
-  src = fetchgit {
-    url = "https://github.com/Microsoft/cpprestsdk.git";
+  src = fetchFromGitHub {
+    owner = "Microsoft";
+    repo = "cpprestsdk";
     rev = "65267c6e83e7e29ed3bdddde13d2c4bbb10e1bff";
-    sha256 = "0nxadikajvdjbh8r6abf30jch91h9l9zxvs6al89yjdc5q592h8y";
-    deepClone = true;
+    sha256 = "1czp3w53c175lmrffh7357j2l1w2jbviqzjkppc2nydcpf4kylvc";
+    fetchSubmodules = true;
   };
 
   nativeBuildInputs = [
