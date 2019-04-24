@@ -24,21 +24,14 @@ stdenv.mkDerivation rec {
     zlib
   ];
 
-  configurePhase =''
-    ./autogen.sh
-    ./configure --prefix=$out
+  # fix for https://github.com/NixOS/nixpkgs/issues/38991
+  LOCALE_ARCHIVE_2_27 = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+
+  patchPhase = ''
+    ./autogen.sh --no-configure
   '';
 
-  installPhase = ''
-    mkdir -p $out
-    make install
-  '';
-
-#  checkPhase = ''
-#    export LANG=C #?
-#  '';
-
-#   doCheck = true;
+  doCheck = true;
 
   meta = with stdenv.lib; {
     description = "The CMU Link Grammar natural language parser";
