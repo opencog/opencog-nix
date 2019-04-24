@@ -22,6 +22,11 @@ stdenv.mkDerivation rec {
     flex
     graphviz
     zlib
+
+    python3
+
+    ncurses # needed for python bindings..
+    sqlite
   ];
 
   # fix for https://github.com/NixOS/nixpkgs/issues/38991
