@@ -24,19 +24,19 @@ stdenv.mkDerivation rec {
     doxygen
   ];
 
+  CPATH="${cxxtest.src}";
+  CXXTEST_BIN_DIR = "${cxxtest}/bin";
   MPI_EXTRA_LIBRARY="${openmpi}/lib";
-
   VALGRIND_PROGRAM = "${valgrind}/bin";
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
-
   PYTHON_DEST="share/python3.6/site-packages";
 
   cmakeFlags = [
+    ''-DCPATH:PATH=${CPATH}''
+    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
     ''-DMPI_EXTRA_LIBRARY:PATH=${MPI_EXTRA_LIBRARY}''
-
     ''-DVALGRIND_PROGRAM:PATH=${VALGRIND_PROGRAM}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
-
     ''-DPYTHON_DEST:PATH=${PYTHON_DEST}''
 
     ''-DCMAKE_BUILD_TYPE=Release''
@@ -45,9 +45,13 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
-'';
+  '';
 
-  # doCheck = true;
+  checkPhase = ''
+    make test
+  '';
+
+  doCheck = true;
 
   meta = with stdenv.lib; {
     description = "MOSES Machine Learning: Meta-Optimizing Semantic Evolutionary Search";
