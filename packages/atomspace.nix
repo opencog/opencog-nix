@@ -10,13 +10,18 @@ stdenv.mkDerivation rec {
     sha256 = "145930ziw18nfaq57k9gydsfjbg4p98dv794p5m2vka4fhma3r3b";
   };
 
+  cogutil = (import ./cogutil.nix {});
   nativeBuildInputs = [
     cmake boost166
-    (import ./cogutil.nix {})
+    cxxtest
+  ];
+
+  buildInputs = [
+    cogutil
+
     guile gmp
     python3
     python3Packages.cython
-    cxxtest
     postgresql
   ];
 
