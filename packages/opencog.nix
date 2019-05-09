@@ -18,13 +18,23 @@ stdenv.mkDerivation rec {
   octomap = (import ./other/octomap.nix {});
   cpprest = (import ./other/cpprest.nix {});
 
+  netcat = (import ./other/netcat-openbsd.nix {});
+
   nativeBuildInputs = [
-    cmake boost166
+    cmake
+    boost166
+    cxxtest
+
+    netcat
+  ];
+
+  buildInputs = [
+    guile gmp
+
     cogutil
     atomspace
-    guile
-    gmp # dep of guile
     link-grammar
+
     libuuid
     octomap
 
@@ -32,7 +42,6 @@ stdenv.mkDerivation rec {
     moses
     python3
     python3Packages.cython
-    cxxtest
     pkgconfig
     pcre
     valgrind
@@ -51,6 +60,7 @@ stdenv.mkDerivation rec {
     # gtk3
   ];
 
+  CPATH = "${cxxtest.src}:${atomspace.src}";
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   # ZMQ_LIBRARY="${zeromq}/lib/libzmq.so";
 
@@ -64,6 +74,9 @@ stdenv.mkDerivation rec {
   # cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
 
   cmakeFlags = [
+    ''-DCPATH:PATH=${CPATH}''
+    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
+
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
@@ -76,12 +89,28 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     mkdir -p $out/share/opencog
     cp -r ${atomspace.src}/cmake $out/share/opencog/
+
+    THIS_DIR=$(pwd)
+    mkdir .cache
+    export XDG_CACHE_HOME=$THIS_DIR/.cache
+
+    sed -i -e 's~load \\"" GUILE_SITE_DIR "/~load-from-path \\"~g' $(find . -type f)
+
+    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/build"
+    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
+    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$THIS_DIR/build/opencog/scm"
+    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/tests"
+    export GUILE_LOAD_PATH
   '';
 
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/move-lib64.sh#L6
   dontMoveLib64 = 1;
 
-  # doCheck = true;
+  checkPhase = ''
+    make test ARGS="-V"
+  '';
+
+  doCheck = true;
 
   meta = with stdenv.lib; {
     description = "A framework for integrated Artificial Intelligence & Artificial General Intelligence (AGI)";
