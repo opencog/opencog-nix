@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "opencog";
-    rev = "cf188947294f48a5473f87adaf34250e9bcca4ef";
-    sha256 = "1ngh0nal1khchmd8x4b8m2c4b7p53x6ih253k4hnif0q2pqfldpn";
+    rev = "c9810971962238b2f1477e617860446c40c70003";
+    sha256 = "0s5i1x2w4bvgl2h7fg7z0ddfw6cry243mpp9hwmy2bdw1fya3j9y";
   };
 
   cogutil = (import ./cogutil.nix {});
