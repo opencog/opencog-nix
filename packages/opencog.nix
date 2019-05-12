@@ -86,6 +86,8 @@ stdenv.mkDerivation rec {
     # ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
 
+  LOCALE_ARCHIVE_2_27 = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+
   patchPhase = ''
     mkdir -p $out/share/opencog
     cp -r ${atomspace.src}/cmake $out/share/opencog/
@@ -96,11 +98,26 @@ stdenv.mkDerivation rec {
 
     sed -i -e 's~load \\"" GUILE_SITE_DIR "/~load-from-path \\"~g' $(find . -type f)
 
-    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/build"
-    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
-    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$THIS_DIR/build/opencog/scm"
-    GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/tests"
-    export GUILE_LOAD_PATH
+    sed -i -e 's~//logger().set_print_to_stdout_flag(true);~logger().set_print_to_stdout_flag(true);~g' $(find . -type f -iname "*.cxxtest")
+
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/build"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$THIS_DIR/build/opencog/scm"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/opencog"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/tests"
+  '';
+
+  postBuild = ''
+    mkdir early_lib
+    cp $(find . -name "*.so") early_lib
+    ls -R early_lib
+
+    THIS_DIR=$(pwd)
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$THIS_DIR/early_lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/lib/opencog"
+
+    mkdir .cache
+    export XDG_CACHE_HOME=$THIS_DIR/.cache
   '';
 
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/move-lib64.sh#L6
