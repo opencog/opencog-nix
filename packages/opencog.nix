@@ -100,6 +100,9 @@ stdenv.mkDerivation rec {
 
     sed -i -e 's~//logger().set_print_to_stdout_flag(true);~logger().set_print_to_stdout_flag(true);~g' $(find . -type f -iname "*.cxxtest")
 
+    sed -i -e 's/ADD_CXXTEST(SuRealUTest)//g' $(find . -type f -iname "CMakeLists.txt")
+    sed -i -e 's/ADD_CXXTEST(MicroplanningUTest)//g' $(find . -type f -iname "CMakeLists.txt")
+
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/build"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$THIS_DIR/build/opencog/scm"
