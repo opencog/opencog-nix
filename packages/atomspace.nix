@@ -78,6 +78,7 @@ stdenv.mkDerivation rec {
     export XDG_CACHE_HOME=$THIS_DIR/.cache
   '';
 
+  enableParallelChecking = false;
   doCheck = true;
 
   meta = with stdenv.lib; {
