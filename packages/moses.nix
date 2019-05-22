@@ -19,8 +19,10 @@ stdenv.mkDerivation rec {
 
     # optional:
     openmpi
+
     python3
     python3Packages.cython
+
     doxygen
   ];
 
@@ -45,6 +47,7 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
+    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f -iname "CMakeLists.txt")
   '';
 
   checkPhase = ''
