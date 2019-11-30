@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "atomspace";
-    rev = "11f84ad0e0a441a67c7447259778fd492dc2abcd";
-    sha256 = "0wxql81ff9wab2anzrpsk3zm1plxzp69rvwhgmn6niz5a7dh0xih";
+    rev = "07415db35bfdf827ddfb0c0dbf3fe0d9c3718ebf";
+    sha256 = "0zmwl8rqyd5nc410y804vn636i31p91la1fbyh7d5jjn08jgxj65";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -49,10 +49,10 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
-
+    sed -i -e 's/value_pop/pop/g' $(find . -type f) # https://github.com/opencog/opencog-nix/issues/39
     sed -i -e "s=/usr/local/share/opencog/scm=${src}/opencog/scm=g" $(find . -type f)
 
-    ${import ../init-psql-db.nix} # prepare psql
+    ${import ../init-psql-db.nix {inherit pkgs;}} # prepare psql
     createdb opencog_test # create test database
     psql -c "CREATE USER opencog_tester WITH PASSWORD 'cheese';" # create test user
     # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
