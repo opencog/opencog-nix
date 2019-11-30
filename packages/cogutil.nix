@@ -6,14 +6,18 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "cogutil";
-    rev = "b4da0dfd1beef2c292c34725066633727458cbfd";
-    sha256 = "0knwkxps9mfzaqsblv00v8p8n1j95snkiv1b6nk4jl7r9vl3b4q6";
+    rev = "f3f2c69525b87c7302999a6f182bf491a2aaf0d3";
+    sha256 = "098aj5skrbwsb0h7gqx6avhjgdpkq8m3rrlr9pnkdhakpr2hp213";
   };
 
   nativeBuildInputs = [
     cmake
     boost166
     cxxtest
+
+    binutils
+    libiberty
+    doxygen
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
