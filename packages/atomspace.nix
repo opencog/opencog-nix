@@ -49,7 +49,6 @@ stdenv.mkDerivation rec {
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
-    sed -i -e 's/value_pop/pop/g' $(find . -type f) # https://github.com/opencog/opencog-nix/issues/39
     sed -i -e "s=/usr/local/share/opencog/scm=${src}/opencog/scm=g" $(find . -type f)
 
     ${import ../init-psql-db.nix {inherit pkgs;}} # prepare psql
