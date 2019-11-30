@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "moses";
-    rev = "2600e5da493b0e36b1d656ca7ca3c0663b048cab";
-    sha256 = "0v87p18j5kv0f0ywk7ad8x3m5df452lx9j92hqgn579h8w0v6452";
+    rev = "6e327d2f1081c06e107ed2df2a50d83c3574c1d7";
+    sha256 = "01vd25zd0a9sscm4c25wgpmxppx9qdapqlhgdkyj4w18pjvv4ffq";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -54,6 +54,7 @@ stdenv.mkDerivation rec {
     make test
   '';
 
+  enableParallelChecking = false;
   doCheck = true;
 
   meta = with stdenv.lib; {
