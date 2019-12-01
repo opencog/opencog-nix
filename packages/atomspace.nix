@@ -20,8 +20,9 @@ stdenv.mkDerivation rec {
     cogutil
 
     guile gmp
-    python3
-    python3Packages.cython
+    python36
+    python36Packages.cython
+    python36Packages.nose
     postgresql
   ];
 
@@ -47,6 +48,8 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
+    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f -iname "CMakeLists.txt")
+
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
     sed -i -e "s=/usr/local/share/opencog/scm=${src}/opencog/scm=g" $(find . -type f)
