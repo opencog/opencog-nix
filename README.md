@@ -34,7 +34,7 @@ Once inside the shell:
 - You can change the source files like `.cxxtest` or `.cpp` tests and call `checkPhase` from `build` folder.
 - To get verbose output of tests go to the `source/build/tests` and call `ctest --verbose # -V`.
 - Target specific tests with `ctest --tests-regex # -R`
-- In SomeTest.cxxtest file replace logger level INFO with DEBUG to get `logger().set_level(Logger::DEBUG);`
+- To get debug output prepend `logger().set_level(Logger::DEBUG); logger().set_print_to_stdout_flag(true);` to target code.
 - After fix is made, add it to the packages/<package>.nix and retry nix-shell with <package>/default.nix
 
 # License
