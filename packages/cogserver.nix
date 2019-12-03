@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
-    boost166
+    boost162
     cxxtest
 
     netcat
@@ -68,9 +68,6 @@ stdenv.mkDerivation rec {
 
     # prevent override of GUILE_LOAD_PATH
     sed -i -e 's#SET(GUILE_LOAD_PATH "''${PROJECT_BINARY_DIR}/opencog/scm")##g' $(find . -type f -iname "CMakeLists.txt")
-
-    # disable more than ofter failing test https://github.com/opencog/cogserver/issues/5
-    sed -i -e 's#ADD_CXXTEST(ShellUTest)##g' $(find . -type f -iname "CMakeLists.txt")
 
     # prevent override of PYTHON_DEST
     sed -i -e 's#OUTPUT_VARIABLE PYTHON_DEST#OUTPUT_VARIABLE PYTHON_DEST1#g' $(find . -type f -iname "CMakeLists.txt")
