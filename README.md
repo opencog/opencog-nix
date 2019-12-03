@@ -22,6 +22,7 @@ If `nix-shell <package>/default.nix` fails you can debug the failing package dir
 rm -rf ./source # cleanup previous build
 nix-shell ../path/to/packages/<package>.nix --pure # --pure is almost pure, still loads .bashrc and stuff
 ```
+If the patchPhase requires writting to `$out` which is read-only and possible only with `nixbld` instead of nix-shell, a custom `$out` and `$prefix` can be set: `export out=$(mktemp -d); export prefix=$out; genericBuild`
 
 After changing the <package>.nix make sure to exit the shell if inside and repeat the above to load up the new updated expression.
 
