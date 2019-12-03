@@ -6,17 +6,19 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "opencog";
-    rev = "c9810971962238b2f1477e617860446c40c70003";
-    sha256 = "0s5i1x2w4bvgl2h7fg7z0ddfw6cry243mpp9hwmy2bdw1fya3j9y";
+    rev = "087df53cf72901f043fa0fed946e385136f91474";
+    sha256 = "19cv049gx9rj6v5051mxn74dvm4zf1vgglqgi7xh39lfar305wwp";
   };
 
   cogutil = (import ./cogutil.nix {});
   atomspace = (import ./atomspace.nix {});
+  cogserver = (import ./cogserver.nix {});
+  attention = (import ./attention.nix {});
   link-grammar = (import ./link-grammar.nix {});
   moses = (import ./moses.nix {});
 
   octomap = (import ./other/octomap.nix {});
-  cpprest = (import ./other/cpprest.nix {});
+  # cpprest = (import ./other/cpprest.nix {});
 
   netcat = (import ./other/netcat-openbsd.nix {});
 
@@ -33,15 +35,17 @@ stdenv.mkDerivation rec {
 
     cogutil
     atomspace
+    cogserver
+    attention
     link-grammar
+    moses
 
     libuuid
     octomap
 
-    #optional:
-    moses
-    python3
-    python3Packages.cython
+    python36
+    python36Packages.cython
+    python36Packages.nose
     pkgconfig
     pcre
     valgrind
@@ -69,6 +73,7 @@ stdenv.mkDerivation rec {
   VALGRIND_INCLUDE_DIR = "${valgrind.dev}/include";
 
   GUILE_SITE_DIR="share/guile/site";
+  PYTHON_DEST="share/python3.6/site-packages";
 
   # cpprest_LIBRARY = "${cpprest}/lib/libcpprest.so";
   # cpprest_version_FILE = "${cpprest}/include/cpprest/version.h";
@@ -82,6 +87,7 @@ stdenv.mkDerivation rec {
     ''-DVALGRIND_INCLUDE_DIR:PATH=${VALGRIND_INCLUDE_DIR}''
 
     ''-DGUILE_SITE_DIR:PATH=${GUILE_SITE_DIR}''
+    ''-DPYTHON_DEST:PATH=${PYTHON_DEST}''
 
     # ''-Dcpprest_version_FILE:PATH=${cpprest_version_FILE}''
   ];
@@ -89,6 +95,8 @@ stdenv.mkDerivation rec {
   LOCALE_ARCHIVE_2_27 = "${pkgs.glibcLocales}/lib/locale/locale-archive";
 
   patchPhase = ''
+    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f -iname "CMakeLists.txt")
+
     mkdir -p $out/share/opencog
     cp -r ${atomspace.src}/cmake $out/share/opencog/
 
@@ -96,15 +104,17 @@ stdenv.mkDerivation rec {
     mkdir .cache
     export XDG_CACHE_HOME=$THIS_DIR/.cache
 
+    sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
+
     sed -i -e 's~load \\"" GUILE_SITE_DIR "/~load-from-path \\"~g' $(find . -type f)
 
     sed -i -e 's~//logger().set_print_to_stdout_flag(true);~logger().set_print_to_stdout_flag(true);~g' $(find . -type f -iname "*.cxxtest")
 
-    sed -i -e 's/ADD_CXXTEST(SuRealUTest)//g' $(find . -type f -iname "CMakeLists.txt")
-    sed -i -e 's/ADD_CXXTEST(MicroplanningUTest)//g' $(find . -type f -iname "CMakeLists.txt")
-
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/build"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
+
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/build"
+
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$THIS_DIR/build/opencog/scm"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/opencog"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${src}/tests"
