@@ -10,6 +10,8 @@ stdenv.mkDerivation rec {
   buildInputs = [
     guile
     opencog
+
+    rlwrap # add history and move cursor in line
   ];
 
   shellHook = ''
@@ -21,6 +23,6 @@ stdenv.mkDerivation rec {
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
 
     # enter: ,apropos cog
-    guile -l ${atomspace.src}/examples/atomspace/basic.scm
+    rlwrap guile -l ${atomspace.src}/examples/atomspace/basic.scm
   '';
 }
