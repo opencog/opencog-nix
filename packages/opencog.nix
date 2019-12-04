@@ -134,7 +134,7 @@ stdenv.mkDerivation rec {
   '';
 
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/setup-hooks/move-lib64.sh#L6
-  dontMoveLib64 = 1;
+  # dontMoveLib64 = 1;
 
   checkPhase = ''
     make test ARGS="-V"
