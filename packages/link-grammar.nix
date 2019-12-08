@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
     owner = "opencog";
     repo = "link-grammar";
     rev = "11dd734bb32c3f71e71b3fbb6c2e22f5a14135a7";
-    sha256 = "1qgqmyjplpg1mm0knwi3izf4270xclj3lfy2h7g6m1lfjmfc36wi";
+    sha256 = "1ivl7mrwbp1arlvd6an9c2p2cs7afkal5d826w3k9jkv2lmavm7a";
   };
 
   nativeBuildInputs = [
