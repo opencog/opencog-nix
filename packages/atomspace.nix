@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "atomspace";
-    rev = "07415db35bfdf827ddfb0c0dbf3fe0d9c3718ebf";
-    sha256 = "0zmwl8rqyd5nc410y804vn636i31p91la1fbyh7d5jjn08jgxj65";
+    rev = "badb402342fca85b0a7e12be5439a5fe19fc9c36";
+    sha256 = "1cp0c1msrgaw2vd3ryy34gaml081gh8xdvq149vm56rq47a0bpc5";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -20,9 +20,11 @@ stdenv.mkDerivation rec {
     cogutil
 
     guile gmp
+
     python36
     python36Packages.cython
     python36Packages.nose
+
     postgresql
   ];
 
