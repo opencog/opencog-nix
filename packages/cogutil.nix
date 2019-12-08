@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "cogutil";
-    rev = "f3f2c69525b87c7302999a6f182bf491a2aaf0d3";
-    sha256 = "098aj5skrbwsb0h7gqx6avhjgdpkq8m3rrlr9pnkdhakpr2hp213";
+    rev = "4520349899dc7247b6a74c123244c6cd8685a036";
+    sha256 = "0clpj8dnn7vxm3dv7823pm093zfz5qbgwyl92c2zhgrqbai08dxs";
   };
 
   nativeBuildInputs = [
@@ -30,6 +30,11 @@ stdenv.mkDerivation rec {
 
   osReleasePath = config.environment.etc.os-release.source;
   patchPhase = ''
+    # prevent override of PYTHON_DEST
+    sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
+
+    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f)
+
     sed -i -e 's=/etc/os-release=${osReleasePath}=g' $(find . -type f)
   '';
 
