@@ -22,6 +22,7 @@ stdenv.mkDerivation rec {
 
     python3
     python3Packages.cython
+    python3Packages.nose
 
     doxygen
   ];
