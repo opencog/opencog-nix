@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "attention";
-    rev = "e91ade5180b170a3564c05c069b4f11df1fe23f7";
-    sha256 = "1pmgdnxmcf3hrc9dm1bkhp44qyp546lsp1bg5kd5a2v8zdfmb3r7";
+    rev = "1b02e74ba75190e39e648f8e6bb496d4685903ba";
+    sha256 = "1vpn6gsskmymvf69bp19ga53npa2ib4bv18bznd1c5mv1alwah6y";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -76,30 +76,47 @@ stdenv.mkDerivation rec {
     # for unit tests, why is GUILE_LOAD_PATH overrided?
     sed -i -e 's#SET(GUILE_LOAD_PATH "''${PROJECT_BINARY_DIR}/opencog/scm")##g' $(find . -type f -iname "CMakeLists.txt")
 
+    # TODO: why is this needed to be copied?
     cp -r ${cogserver}/lib/opencog/modules opencog
     mkdir -p build/opencog/agents
     cp ${cogserver}/lib/opencog/modules/libagents.so build/opencog/agents
 
     # extend GUILE_LOAD_PATH
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
-
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/share/guile/site"
-
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
     export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm/opencog"
 
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site/opencog"
+
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/share/guile/site"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/share/guile/site/opencog"
+
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm/opencog"
+
     # extend LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogutil}/lib/opencog"
+
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/lib/opencog"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/share/python3.6/site-packages"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/share/python3.6/site-packages/opencog"
+
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/lib/opencog"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/lib/opencog/modules"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/share/python3.6/site-packages"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/share/python3.6/site-packages/opencog"
 
     # extend PYTHONPATH
-    export PYTHONPATH="$PYTHONPATH:${atomspace}/share/python3.6/site-packages"
-    export PYTHONPATH="$PYTHONPATH:${cogserver}/share/python3.6/site-packages"
+    export PYTHONPATH="$PYTHONPATH:$LD_LIBRARY_PATH"
 
     # exported PYTHONPATH is overriden, force prepend site-packages
     sed -i -e "s#PYTHONPATH=#PYTHONPATH=$PYTHONPATH:#g" $(find . -type f -iname "CMakeLists.txt")
+
+    mkdir .cache
+    export XDG_CACHE_HOME=$(pwd)/.cache
   '';
 
   checkPhase = ''
