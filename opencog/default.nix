@@ -15,12 +15,10 @@ stdenv.mkDerivation rec {
   ];
 
   shellHook = ''
-    export LD_LIBRARY_PATH="${atomspace}/lib/opencog"
+    ${import ../helpers/extend-env.nix {paths = [ atomspace opencog ];}}
 
     gcc test.c -o test -ldl
     ./test
-
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
 
     # enter: ,apropos cog
     rlwrap guile -l ${atomspace.src}/examples/atomspace/basic.scm
