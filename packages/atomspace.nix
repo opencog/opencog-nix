@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
     sed -i -e "s=/usr/local/share/opencog/scm=$out/${GUILE_SITE_DIR}/opencog/scm=g" $(find . -type f)
 
     # psql setup
-    ${import ../init-psql-db.nix {inherit pkgs;}} # prepare psql
+    ${import ../helpers/init-psql-db.nix {inherit pkgs;}} # prepare psql
     createdb opencog_test # create test database
     psql -c "CREATE USER opencog_tester WITH PASSWORD 'cheese';" # create test user
     # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
