@@ -25,27 +25,40 @@ stdenv.mkDerivation rec {
     octomap
   ];
 
-  CPATH = "${cxxtest.src}:${atomspace.src}";
-  CXXTEST_BIN_DIR = "${cxxtest}/bin";
-
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
   GUILE_SITE_DIR="share/guile/site";
+  PYTHON_DEST="share/python3.6/site-packages";
+
+  CXXTEST_BIN_DIR = "${cxxtest}/bin";
+  CPLUS_INCLUDE_PATH = "${cxxtest.src}";
 
   cmakeFlags = [
-    ''-DCPATH:PATH=${CPATH}''
-    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
-
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
 
     ''-DGUILE_SITE_DIR:PATH=${GUILE_SITE_DIR}''
+    ''-DPYTHON_DEST:PATH=${PYTHON_DEST}''
+
+    ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
+    ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
   ];
 
   patchPhase = ''
     mkdir -p $out/share/opencog
     cp -r ${atomspace.src}/cmake $out/share/opencog/
+
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" octomap cogutil atomspace atomspace.src ];}}
+    ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
+  '';
+
+  postBuild = ''
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  '';
+
+  checkPhase = ''
+    make test ARGS="-V"
   '';
 
   doCheck = true;

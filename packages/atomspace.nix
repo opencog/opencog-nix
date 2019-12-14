@@ -50,24 +50,22 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    # fix python nosetests binary name
-    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f -iname "CMakeLists.txt")
-
-    # prevent override of PYTHON_DEST
-    sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
-
-    # replace shared paths
-    sed -i -e "s=/usr/local/share/opencog/scm=$out/${GUILE_SITE_DIR}/opencog/scm=g" $(find . -type f)
-
     # psql setup
     ${import ../helpers/init-psql-db.nix {inherit pkgs;}} # prepare psql
     createdb opencog_test # create test database
     psql -c "CREATE USER opencog_tester WITH PASSWORD 'cheese';" # create test user
     # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
     cat ${src}/opencog/persist/sql/multi-driver/atom.sql | psql opencog_test -U opencog_tester
+
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil ];}}
+    ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  enableParallelChecking = false;
+  postBuild = ''
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  '';
+
+  enableParallelChecking = false; # for database tests conflicts
   doCheck = true;
 
   meta = with stdenv.lib; {

@@ -56,74 +56,27 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    # fix python nosetests binary name
-    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f)
-
-    # prevent override of PYTHON_DEST
-    sed -i -e 's#OUTPUT_VARIABLE PYTHON_DEST#OUTPUT_VARIABLE PYTHON_DEST1#g' $(find . -type f -iname "CMakeLists.txt")
-
-    # replace shared paths
-    sed -i -e "s=/usr/local/share/opencog/scm=$out/${GUILE_SITE_DIR}/opencog/scm=g" $(find . -type f)
-
-    # # copy over cmake from atomspace required for `atom_types.h`?
-    # # comment from attention/tests/CMakeLists.txt:
-    # # All tests should load the atomspace scm from the build dir, unless the scm
-    # # file is specific to the test (this variable is used by ADD_CXXTEST)
-    # SET(GUILE_LOAD_PATH "''${PROJECT_BINARY_DIR}/opencog/scm")
     mkdir -p $out/share/opencog
     cp -r ${atomspace.src}/cmake $out/share/opencog
 
-    # for unit tests, why is GUILE_LOAD_PATH overrided?
-    sed -i -e 's#SET(GUILE_LOAD_PATH "''${PROJECT_BINARY_DIR}/opencog/scm")##g' $(find . -type f -iname "CMakeLists.txt")
-
     # TODO: why is this needed to be copied?
-    cp -r ${cogserver}/lib/opencog/modules opencog
+    # 8 - ImportanceDiffusionUTest (SEGFAULT)
+    # 9 - HebbianCreationModuleUTest (SEGFAULT)
+    cp -r ${cogserver}/lib/opencog/modules/* opencog
     mkdir -p build/opencog/agents
     cp ${cogserver}/lib/opencog/modules/libagents.so build/opencog/agents
 
-    # extend GUILE_LOAD_PATH
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm/opencog"
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil atomspace atomspace.src cogserver ];}}
+    ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
+  '';
 
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site/opencog"
-
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/share/guile/site"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${cogserver}/share/guile/site/opencog"
-
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace.src}/opencog/scm/opencog"
-
-    # extend LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogutil}/lib/opencog"
-
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/lib/opencog"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/share/python3.6/site-packages"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/share/python3.6/site-packages/opencog"
-
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/lib/opencog"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/lib/opencog/modules"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/share/python3.6/site-packages"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${cogserver}/share/python3.6/site-packages/opencog"
-
-    # extend PYTHONPATH
-    export PYTHONPATH="$PYTHONPATH:$LD_LIBRARY_PATH"
-
-    # exported PYTHONPATH is overriden, force prepend site-packages
-    sed -i -e "s#PYTHONPATH=#PYTHONPATH=$PYTHONPATH:#g" $(find . -type f -iname "CMakeLists.txt")
-
-    mkdir .cache
-    export XDG_CACHE_HOME=$(pwd)/.cache
+  postBuild = ''
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
   '';
 
   checkPhase = ''
     make test ARGS="-V"
   '';
-
-  enableParallelChecking = false;
 
   doCheck = true;
 

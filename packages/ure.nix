@@ -53,45 +53,18 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f -iname "CMakeLists.txt")
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil atomspace atomspace.src ];}}
+    ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
+  '';
 
-    # prevent override of PYTHON_DEST
-    sed -i -e 's#OUTPUT_VARIABLE PYTHON_DEST#OUTPUT_VARIABLE PYTHON_DEST1#g' $(find . -type f -iname "CMakeLists.txt")
-
-    # prevent override of GUILE_LOAD_PATH
-    sed -i -e 's#SET(GUILE_LOAD_PATH "''${PROJECT_BINARY_DIR}/opencog/scm")##g' $(find . -type f -iname "CMakeLists.txt")
-    sed -i -e 's#"GUILE_LOAD_PATH=''${GUILE_LOAD_PATH}"##g' $(find . -type f -iname "CMakeLists.txt")
-
-
-    # extend GUILE_LOAD_PATH
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:${atomspace}/share/guile/site"
-
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
-    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm/opencog"
-
-    # extend LD_LIBRARY_PATH
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/lib/opencog"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${atomspace}/share/python3.6/site-packages/opencog"
-
-    # extend PYTHONPATH
-    export PYTHONPATH="$PYTHONPATH:${atomspace}/share/python3.6/site-packages"
-    export PYTHONPATH="$PYTHONPATH:${atomspace}/share/python3.6/site-packages/opencog"
-
-    # exported PYTHONPATH is overriden, force prepend site-packages
-    sed -i -e "s#PYTHONPATH=#PYTHONPATH=$PYTHONPATH:#g" $(find . -type f -iname "CMakeLists.txt")
-
-    mkdir .cache
-    export XDG_CACHE_HOME=$(pwd)/.cache
-
+  postBuild = ''
+    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
   '';
 
   checkPhase = ''
     make test ARGS="-V"
   '';
 
-  enableParallelChecking = false;
   doCheck = true;
 
   meta = with stdenv.lib; {
