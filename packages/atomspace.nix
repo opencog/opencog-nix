@@ -31,9 +31,8 @@ stdenv.mkDerivation rec {
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
-  # fixes for writting into other packages output paths
   GUILE_SITE_DIR="share/guile/site";
-  PYTHON_DEST="share/python3.6/site-packages";
+  PYTHON_DEST=python36.sitePackages;
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
@@ -57,12 +56,15 @@ stdenv.mkDerivation rec {
     # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
     cat ${src}/opencog/persist/sql/multi-driver/atom.sql | psql opencog_test -U opencog_tester
 
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil ];}}
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
     ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  postBuild = ''
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  postFixup = ''
+    for file in $(find $out/lib -type f -executable); do
+      rpath=$(patchelf --print-rpath $file)
+      patchelf --set-rpath "$rpath:$out/lib/opencog:$out/${PYTHON_DEST}/opencog" $file
+    done
   '';
 
   enableParallelChecking = false; # for database tests conflicts

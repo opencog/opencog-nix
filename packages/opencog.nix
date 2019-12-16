@@ -75,7 +75,7 @@ stdenv.mkDerivation rec {
 
   # fixes for writting into other packages output paths
   GUILE_SITE_DIR="share/guile/site";
-  PYTHON_DEST="share/python3.6/site-packages";
+  PYTHON_DEST=python36.sitePackages;
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
@@ -99,12 +99,18 @@ stdenv.mkDerivation rec {
 
     cp ${cogserver.src}/lib/*.conf $(pwd)/lib
 
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" octomap cogutil atomspace atomspace.src cogserver attention link-grammar moses ure spacetime ];}}
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
     ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  postBuild = ''
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  postFixup = ''
+    for file in $(find $out/lib -type f -executable); do
+      rpath=$(patchelf --print-rpath $file)
+      patchelf --set-rpath "$rpath:$out/lib/opencog:$out/${PYTHON_DEST}/opencog" $file
+    done
+
+    rm -rf $out/share/opencog/cmake
+    rm -f $out/${PYTHON_DEST}/opencog/__init__.py
   '';
 
   checkPhase = ''

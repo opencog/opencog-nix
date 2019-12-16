@@ -22,11 +22,6 @@ There might be more dependencies, you will know if the build fails.
 
 Patching the source will most likely be required for overridings of `GUILE_LOAD_PATH` and `PYTHONPATH` in `CmakeLists.txt` files, any hardcoded path like `/usr/local/share/...`, hardcoded binary names that differ on `nixos` or some other exceptions. See `helpers/common-patch.nix`.
 
-- `helpers/extend-env.nix` does the extending of `GUILE_LOAD_PATH` for `.scm` files and `LD_LIBRARY_PATH` for `.so` files, and then extends `PYTHONPATH` with `LD_LIBRARY_PATH` for `.so` file.
-
-- `helpers/common-patch.nix` should be called **after** `helpers/extend-env.nix` because it replaces `PYTHONPATH` in text so `PYTHONPATH` should be extended first with all dependency paths.
-
-
 # Debugging
 
 Calling `nix-shell` builds the expression dependencies and places you in a shell that has them.

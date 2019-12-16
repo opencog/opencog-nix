@@ -39,7 +39,7 @@ stdenv.mkDerivation rec {
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
   GUILE_SITE_DIR="share/guile/site";
-  PYTHON_DEST="share/python3.6/site-packages";
+  PYTHON_DEST=python36.sitePackages;
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
@@ -66,12 +66,20 @@ stdenv.mkDerivation rec {
     mkdir -p build/opencog/agents
     cp ${cogserver}/lib/opencog/modules/libagents.so build/opencog/agents
 
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil atomspace atomspace.src cogserver ];}}
     ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  postBuild = ''
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  postFixup = ''
+    addToRPath="$addToRPath:$out/lib/opencog"
+    addToRPath="$addToRPath:$out/${PYTHON_DEST}/opencog"
+
+    for file in $(find $out/lib -type f -executable); do
+      rpath=$(patchelf --print-rpath $file)
+      patchelf --set-rpath "$rpath:$addToRPath" $file
+    done
+
+    rm -rf $out/share/opencog/cmake
+    rm -f $out/${PYTHON_DEST}/opencog/__init__.py
   '';
 
   checkPhase = ''

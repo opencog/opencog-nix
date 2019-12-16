@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
   GUILE_SITE_DIR="share/guile/site";
-  PYTHON_DEST="share/python3.6/site-packages";
+  PYTHON_DEST=python36.sitePackages;
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
@@ -53,12 +53,11 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" cogutil ];}}
     ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  postBuild = ''
-    ${import ../helpers/extend-env.nix {paths = [ "$(pwd)" ];}}
+  postFixup = ''
+    rm -f $out/${PYTHON_DEST}/opencog/__init__.py
   '';
 
   checkPhase = ''
