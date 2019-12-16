@@ -6,13 +6,12 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "link-grammar";
-    rev = "90674998aecd53dbf17aca5f618581c7c29e07ca";
-    sha256 = "0p9ibzw368pqjj8d37xqw7ifwsifzq3nqfg9l8p50vn4mfws4fwq";
+    rev = "517d406f9152ccea3026f88047bd87187fc6062e";
+    sha256 = "0rsqblw42pvn41xbyzj5x2sx9ckjjh87w87qglii05yi4vi98w74";
   };
 
   nativeBuildInputs = [
     automake
-    perl
     autoconf
     autoconf-archive
     libtool
@@ -21,12 +20,22 @@ stdenv.mkDerivation rec {
     swig
     flex
     graphviz
-    zlib
+  ];
 
-    python3
+  buildInputs = [
+    perl
+    python36
 
     ncurses # needed for python bindings..
     sqlite
+    minisatUnstable
+    zlib
+    tre
+    libedit
+    file
+
+    hunspell
+    hunspellDicts.en-us
   ];
 
   # fix for https://github.com/NixOS/nixpkgs/issues/38991
@@ -34,6 +43,11 @@ stdenv.mkDerivation rec {
 
   patchPhase = ''
     ./autogen.sh --no-configure
+
+    sed -i -e 's#/usr/bin/file#${file}/bin/file#g' $(find . -type f)
+
+    sed -i -e 's#/usr/include/minisat#${minisatUnstable}/include/minisat#g' $(find . -type f)
+    sed -i -e 's#/usr/share/myspell/dicts#${hunspellDicts.en-us}/share/myspell/dicts#g' $(find . -type f)
   '';
 
   doCheck = true;

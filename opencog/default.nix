@@ -4,22 +4,41 @@ stdenv.mkDerivation rec {
   src = ./.;
   env = buildEnv { inherit name; paths = buildInputs; };
 
-  atomspace = import ../packages/atomspace.nix {};
+  cogutil = (import ../packages/cogutil.nix {});
+  atomspace = (import ../packages/atomspace.nix {});
+  cogserver = (import ../packages/cogserver.nix {});
+  attention = (import ../packages/attention.nix {});
+  link-grammar = (import ../packages/link-grammar.nix {});
+  moses = (import ../packages/moses.nix {});
+  ure = (import ../packages/ure.nix {});
+  spacetime = (import ../packages/spacetime.nix {});
   opencog = import ../packages/opencog.nix {};
 
+  # build
   buildInputs = [
-    guile
+    cogutil
+    atomspace
+    cogserver
+    attention
+    link-grammar
+    moses
+    ure
+    spacetime
     opencog
+
+    guile
+    rlwrap # add history and move cursor in line
   ];
 
   shellHook = ''
-    export LD_LIBRARY_PATH="${atomspace}/lib/opencog"
+    ${lib.concatStringsSep "\n" (
+      map (x: "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:${x}/lib/opencog\"")
+    buildInputs)}
 
     gcc test.c -o test -ldl
     ./test
 
-    export GUILE_LOAD_PATH="${atomspace}/build:${atomspace.src}/opencog/scm"
     # enter: ,apropos cog
-    guile -l ${atomspace.src}/examples/atomspace/basic.scm
+    rlwrap guile -l ${atomspace.src}/examples/atomspace/basic.scm
   '';
 }

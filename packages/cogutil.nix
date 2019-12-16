@@ -6,14 +6,18 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "cogutil";
-    rev = "b4da0dfd1beef2c292c34725066633727458cbfd";
-    sha256 = "0knwkxps9mfzaqsblv00v8p8n1j95snkiv1b6nk4jl7r9vl3b4q6";
+    rev = "4520349899dc7247b6a74c123244c6cd8685a036";
+    sha256 = "0clpj8dnn7vxm3dv7823pm093zfz5qbgwyl92c2zhgrqbai08dxs";
   };
 
   nativeBuildInputs = [
     cmake
     boost166
     cxxtest
+
+    binutils
+    libiberty
+    doxygen
   ];
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
@@ -26,6 +30,11 @@ stdenv.mkDerivation rec {
 
   osReleasePath = config.environment.etc.os-release.source;
   patchPhase = ''
+    # prevent override of PYTHON_DEST
+    sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
+
+    sed -i -e 's/nosetests3/nosetests/g' $(find . -type f)
+
     sed -i -e 's=/etc/os-release=${osReleasePath}=g' $(find . -type f)
   '';
 

@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "atomspace";
-    rev = "11f84ad0e0a441a67c7447259778fd492dc2abcd";
-    sha256 = "0wxql81ff9wab2anzrpsk3zm1plxzp69rvwhgmn6niz5a7dh0xih";
+    rev = "acbe08ae472e1aec7575d041e4b7e4f9e1dcb3a8";
+    sha256 = "0yyh0xmw0imnmwa2badyawgjj4m1pkiwxgbwsfs69y4646gnmccp";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -20,17 +20,19 @@ stdenv.mkDerivation rec {
     cogutil
 
     guile gmp
-    python3
-    python3Packages.cython
+
+    python36
+    python36Packages.cython
+    python36Packages.nose
+
     postgresql
   ];
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
   GMP_INCLUDE_DIR = "${gmp.dev}/include";
 
-  # fixes for writting into other packages output paths
   GUILE_SITE_DIR="share/guile/site";
-  PYTHON_DEST="share/python3.6/site-packages";
+  PYTHON_DEST=python36.sitePackages;
 
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
@@ -47,38 +49,25 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
-    # prevent override of PYTHON_DEST
-    sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
-
-    sed -i -e "s=/usr/local/share/opencog/scm=${src}/opencog/scm=g" $(find . -type f)
-
-    ${import ../init-psql-db.nix} # prepare psql
+    # psql setup
+    ${import ../helpers/init-psql-db.nix {inherit pkgs;}} # prepare psql
     createdb opencog_test # create test database
     psql -c "CREATE USER opencog_tester WITH PASSWORD 'cheese';" # create test user
     # NOTE: create with test user, or user will be nixbld and grants to other users seem to not work
     cat ${src}/opencog/persist/sql/multi-driver/atom.sql | psql opencog_test -U opencog_tester
+
+    export GUILE_LOAD_PATH="$GUILE_LOAD_PATH:$(pwd)/build/opencog/scm"
+    ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
-  postBuild = ''
-    ATOM_TYPES_DIR="build/opencog/atoms/atom_types"
-    mkdir -p $out/$ATOM_TYPES_DIR
-    cp ../$ATOM_TYPES_DIR/core_types.scm $out/$ATOM_TYPES_DIR
-    ls -R $out/build
-
-    # TODO: do with patchelf
-    mkdir early_lib
-    cp $(find . -name "*.so") early_lib
-    ls -R early_lib
-
-    THIS_DIR=$(pwd)
-    export GUILE_LOAD_PATH="$out/build:${src}/opencog/scm"
-    export LD_LIBRARY_PATH="$THIS_DIR/early_lib"
-
-    mkdir .cache
-    export XDG_CACHE_HOME=$THIS_DIR/.cache
+  postFixup = ''
+    for file in $(find $out/lib -type f -executable); do
+      rpath=$(patchelf --print-rpath $file)
+      patchelf --set-rpath "$rpath:$out/lib/opencog:$out/${PYTHON_DEST}/opencog" $file
+    done
   '';
 
-  enableParallelChecking = false;
+  enableParallelChecking = false; # for database tests conflicts
   doCheck = true;
 
   meta = with stdenv.lib; {

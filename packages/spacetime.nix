@@ -1,30 +1,28 @@
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
-
+{ pkgs ? import <nixpkgs> {}}: with pkgs;
 stdenv.mkDerivation rec {
-  name = "moses";
+  name = "spacetime";
 
   src = fetchFromGitHub {
     owner = "opencog";
-    repo = "moses";
-    rev = "6e327d2f1081c06e107ed2df2a50d83c3574c1d7";
-    sha256 = "01vd25zd0a9sscm4c25wgpmxppx9qdapqlhgdkyj4w18pjvv4ffq";
+    repo = "spacetime";
+    rev = "12785d9131fca650b6d4071f42230674d602bbbc";
+    sha256 = "149a1c92aplhpk4p74jz1wqjdq0gqrrn75qm2d0zx7w7fxz3aa9f";
   };
 
   cogutil = (import ./cogutil.nix {});
+  atomspace = (import ./atomspace.nix {});
+
+  octomap = (import ./other/octomap.nix {});
 
   nativeBuildInputs = [
-    cmake boost166
-    cogutil
+    cmake
+    boost166
     cxxtest
+    guile gmp
 
-    # optional:
-    openmpi
-
-    python3
-    python3Packages.cython
-    python3Packages.nose
-
-    doxygen
+    cogutil
+    atomspace
+    octomap
   ];
 
   GUILE_INCLUDE_DIR = "${guile.dev}/include/guile/2.2";
@@ -36,8 +34,6 @@ stdenv.mkDerivation rec {
   CXXTEST_BIN_DIR = "${cxxtest}/bin";
   CPLUS_INCLUDE_PATH = "${cxxtest.src}";
 
-  MPI_EXTRA_LIBRARY = "${openmpi}/lib";
-
   cmakeFlags = [
     ''-DGUILE_INCLUDE_DIR:PATH=${GUILE_INCLUDE_DIR}''
     ''-DGMP_INCLUDE_DIR:PATH=${GMP_INCLUDE_DIR}''
@@ -47,16 +43,25 @@ stdenv.mkDerivation rec {
 
     ''-DCXXTEST_BIN_DIR:PATH=${CXXTEST_BIN_DIR}''
     ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
-
-    ''-DMPI_EXTRA_LIBRARY:PATH=${MPI_EXTRA_LIBRARY}''
-    ''-DCMAKE_BUILD_TYPE=Release''
   ];
 
   patchPhase = ''
+    mkdir -p $out/share/opencog
+    cp -r ${atomspace.src}/cmake $out/share/opencog/
+
     ${import ../helpers/common-patch.nix {inherit GUILE_SITE_DIR;}}
   '';
 
   postFixup = ''
+    addToRPath="$addToRPath:$out/lib/opencog"
+    addToRPath="$addToRPath:$out/${PYTHON_DEST}/opencog"
+
+    for file in $(find $out/lib -type f -executable); do
+      rpath=$(patchelf --print-rpath $file)
+      patchelf --set-rpath "$rpath:$addToRPath" $file
+    done
+
+    rm -rf $out/share/opencog/cmake
     rm -f $out/${PYTHON_DEST}/opencog/__init__.py
   '';
 
@@ -67,8 +72,8 @@ stdenv.mkDerivation rec {
   doCheck = true;
 
   meta = with stdenv.lib; {
-    description = "MOSES Machine Learning: Meta-Optimizing Semantic Evolutionary Search";
-    homepage = https://wiki.opencog.org/w/Meta-Optimizing_Semantic_Evolutionary_Search;
+    description = "Quickly Locate Atoms in Space & Time.";
+    homepage = https://wiki.opencog.org/w/SpaceServer;
     license = licenses.agpl3;
 #    maintainers = with maintainers; [ radivarig ];
     platforms = with platforms; unix;

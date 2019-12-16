@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "OctoMap";
     repo = "octomap";
-    rev = "23cb13f757e83e407ddb84d104fa55c057fb2c5e";
-    sha256 = "0mwhawaf6j9vmgi8zn8idzsw7fsp626dsa908fgv5ja4bawg8p2l";
+    rev = "31af07e5bacc210cbf3c32929acf50338c108123";
+    sha256 = "0n0mrfpwywzkppcf61lbvpmail4r2mkkx7dis5smrkkh3v0hqbgp";
   };
 
   nativeBuildInputs = [ cmake ];
