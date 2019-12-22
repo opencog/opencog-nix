@@ -1,5 +1,5 @@
 # Description
-A collection of WIP (Nix Package Manager)[https://nixos.org/nix/] build expressions for opencog packages.
+A collection of WIP [Nix Package Manager](https://nixos.org/nix/) build expressions for opencog packages.
 
 # Usage
 ```bash
