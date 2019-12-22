@@ -20,6 +20,15 @@ stdenv.mkDerivation rec {
     telnet
   ];
 
+  COGSERVER_PORT = "17001";
+  COGSERVER_CONF = builtins.toFile "cogserver.conf" ''
+    LOG_FILE              = /tmp/cogserver.log
+    LOG_LEVEL             = debug
+    LOG_TO_STDOUT         = true
+    SERVER_PORT           = ${COGSERVER_PORT}
+    # MODULES             = comma, separated, lists
+  '';
+
   shellHook = ''
     # TODO: LD_LIBRARY_PATH is auto extended with <package>/lib
     # maybe copy to $out/lib without "/opencog" to avoid extra extending?
@@ -32,18 +41,10 @@ stdenv.mkDerivation rec {
     buildInputs)}
     export OPENCOG_MODULE_PATHS="$OPENCOG_MODULE_PATHS:$LD_LIBRARY_PATH"
 
-    export COGSERVER_CONF=$(mktemp)
-    cat <<EOF > $COGSERVER_CONF
-    LOG_FILE              = /tmp/cogserver.log
-    LOG_LEVEL             = debug
-    LOG_TO_STDOUT         = true
-    # MODULES = comma, separated, lists
-
-    EOF
-
+    kill $(lsof -i:${COGSERVER_PORT} -t)
     cogserver -c $COGSERVER_CONF &
-
+    sleep 5
     # enter "help"
-    rlwrap telnet localhost 17001
+    rlwrap telnet localhost ${COGSERVER_PORT}
   '';
 }
