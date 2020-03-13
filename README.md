@@ -11,6 +11,11 @@ This will build the expression dependencies, place you in that shell and run cod
 
 # Updating
 
+### Automatic update
+To update all packages run `nix-shell auto-update.nix` from `packages` folder. To update only some, open `auto-update.nix` and pass package names as parameters to `update_opencog_repos`, then run the above.
+This will fetch the latest master revision and its sha256 and update `packages/*.nix` files, then try to build them.
+
+### Manual update
 Open `packages/<package>.nix` and update `rev` with a commit hash, as well as `sha256`. If `sha256` is not changed, nix will use the old build version if any without throwing an error.
 To get the `sha256` quickly, I change one numerical value from `sha256`, start the build and copy-paste the expected `sha256` output from the error message.
 
