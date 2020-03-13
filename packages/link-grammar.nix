@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "link-grammar";
-    rev = "517d406f9152ccea3026f88047bd87187fc6062e";
-    sha256 = "0rsqblw42pvn41xbyzj5x2sx9ckjjh87w87qglii05yi4vi98w74";
+    rev = "9bcbeb25432f815a6c05503a3070aa70d5f4c269";
+    sha256 = "17azaxcimsdc8v2zh1xjh8xilhz5jlajn4mhylv2l3z9x4gr7h5k";
   };
 
   nativeBuildInputs = [
