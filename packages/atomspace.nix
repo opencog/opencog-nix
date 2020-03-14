@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "opencog";
     repo = "atomspace";
-    rev = "acbe08ae472e1aec7575d041e4b7e4f9e1dcb3a8";
-    sha256 = "0yyh0xmw0imnmwa2badyawgjj4m1pkiwxgbwsfs69y4646gnmccp";
+    rev = "63bb75058225fc3a8465c78493b714b7d64087df";
+    sha256 = "1am3g553wc39wif2p327gz30wsw37j6wb4ghl9hsbskbh0r0p047";
   };
 
   cogutil = (import ./cogutil.nix {});
@@ -48,7 +48,14 @@ stdenv.mkDerivation rec {
     ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
   ];
 
+  # fix for https://github.com/NixOS/nixpkgs/issues/38991
+  LOCALE_ARCHIVE_2_27 = "${pkgs.glibcLocales}/lib/locale/locale-archive";
+
   patchPhase = ''
+    # needs LOCALE_ARCHIVE_2_27 above TODO: move to common patch
+    # needed for python3 str(runtimeError) unicode decoding
+    export LC_ALL=en_US.UTF-8
+
     # psql setup
     ${import ../helpers/init-psql-db.nix {inherit pkgs;}} # prepare psql
     createdb opencog_test # create test database
