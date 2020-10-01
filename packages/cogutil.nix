@@ -28,18 +28,11 @@ stdenv.mkDerivation rec {
     ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
   ];
 
-  osReleasePath =
-    if (import ../helpers/os-detect.nix) == "NixOS"
-    then (import <nixpkgs/nixos> {}).config.environment.etc.os-release.source
-    else "/etc/os-release";
-
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)
 
     sed -i -e 's/nosetests3/nosetests/g' $(find . -type f)
-
-    sed -i -e 's=/etc/os-release=${osReleasePath}=g' $(find . -type f)
   '';
 
 
