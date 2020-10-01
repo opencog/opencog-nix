@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
-    boost162
+    boost166
     cxxtest
 
     netcat

@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
 
     ncurses # needed for python bindings..
     sqlite
-    minisatUnstable
+    minisat
     zlib
     tre
     libedit
@@ -46,7 +46,7 @@ stdenv.mkDerivation rec {
 
     sed -i -e 's#/usr/bin/file#${file}/bin/file#g' $(find . -type f)
 
-    sed -i -e 's#/usr/include/minisat#${minisatUnstable}/include/minisat#g' $(find . -type f)
+    sed -i -e 's#/usr/include/minisat#${minisat}/include/minisat#g' $(find . -type f)
     sed -i -e 's#/usr/share/myspell/dicts#${hunspellDicts.en-us}/share/myspell/dicts#g' $(find . -type f)
   '';
 

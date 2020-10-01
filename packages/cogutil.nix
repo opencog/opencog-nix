@@ -1,5 +1,5 @@
 { pkgs ? import <nixpkgs> {}}: with pkgs;
-with import <nixpkgs/nixos> {}; # for /etc/os-release
+
 stdenv.mkDerivation rec {
   name = "cogutil";
 
@@ -28,7 +28,11 @@ stdenv.mkDerivation rec {
     ''-DCPLUS_INCLUDE_PATH:PATH=${CPLUS_INCLUDE_PATH}''
   ];
 
-  osReleasePath = config.environment.etc.os-release.source;
+  osReleasePath =
+    if (import ../helpers/os-detect.nix) == "NixOS"
+    then (import <nixpkgs/nixos> {}).config.environment.etc.os-release.source
+    else "/etc/os-release";
+
   patchPhase = ''
     # prevent override of PYTHON_DEST
     sed -i -e 's/OUTPUT_VARIABLE PYTHON_DEST//g' $(find . -type f)

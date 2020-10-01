@@ -1,0 +1,1 @@
+(builtins.elemAt (builtins.match "NAME\=([A-z]*).*" (builtins.readFile /etc/os-release)) 0)
