@@ -2,8 +2,6 @@ exportVarExtendedWithPath () {
   local varName=$1
   local path=$2
 
-  echo "varName: $varName"
-  echo "path: $path"
   # check if path is existing directory and not already added
   if [ -d "$path" ] && [[ ":${!varName-}:" != *":$path:"* ]]
   then
