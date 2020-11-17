@@ -31,10 +31,6 @@ stdenv.mkDerivation rec {
   ];
 
   shellHook = ''
-    ${lib.concatStringsSep "\n" (
-      map (x: "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:${x}/lib/opencog\"")
-    buildInputs)}
-
     gcc test.c -o test -ldl
     ./test
 

@@ -30,17 +30,6 @@ stdenv.mkDerivation rec {
   '';
 
   shellHook = ''
-    # TODO: LD_LIBRARY_PATH is auto extended with <package>/lib
-    # maybe copy to $out/lib without "/opencog" to avoid extra extending?
-    ${lib.concatStringsSep "\n" (
-      map (x: "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:${x}/lib/opencog\"")
-    buildInputs)}
-    # TODO: refactor repos to handle "lib/opencog" folders better (like "modules")
-    ${lib.concatStringsSep "\n" (
-      map (x: "export OPENCOG_MODULE_PATHS=\"$OPENCOG_MODULE_PATHS:${x}/lib/opencog/modules\"")
-    buildInputs)}
-    export OPENCOG_MODULE_PATHS="$OPENCOG_MODULE_PATHS:$LD_LIBRARY_PATH"
-
     kill $(lsof -i:${COGSERVER_PORT} -t)
     cogserver -c $COGSERVER_CONF &
     sleep 5

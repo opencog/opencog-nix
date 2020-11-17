@@ -50,6 +50,8 @@ stdenv.mkDerivation rec {
     sed -i -e 's#/usr/share/myspell/dicts#${hunspellDicts.en-us}/share/myspell/dicts#g' $(find . -type f)
   '';
 
+  setupHook = ../helpers/common-setup-hook.sh;
+
   doCheck = true;
 
   meta = with stdenv.lib; {

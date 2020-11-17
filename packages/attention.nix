@@ -82,6 +82,8 @@ stdenv.mkDerivation rec {
     rm -f $out/${PYTHON_DEST}/opencog/__init__.py
   '';
 
+  setupHook = ../helpers/common-setup-hook.sh;
+
   checkPhase = ''
     make test ARGS="-V"
   '';

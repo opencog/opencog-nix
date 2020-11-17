@@ -64,6 +64,8 @@ stdenv.mkDerivation rec {
     make test ARGS="-V"
   '';
 
+  setupHook = ../helpers/common-setup-hook.sh;
+
   doCheck = true;
 
   meta = with stdenv.lib; {

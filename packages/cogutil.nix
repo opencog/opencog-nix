@@ -35,6 +35,7 @@ stdenv.mkDerivation rec {
     sed -i -e 's/nosetests3/nosetests/g' $(find . -type f)
   '';
 
+  setupHook = ../helpers/common-setup-hook.sh;
 
   doCheck = true;
 
