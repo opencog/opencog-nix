@@ -74,7 +74,7 @@ stdenv.mkDerivation rec {
     done
   '';
 
-  # setupHook = ../helpers/common-setup-hook.sh;
+  setupHook = ../helpers/common-setup-hook.sh;
 
   enableParallelChecking = false; # for database tests conflicts
   doCheck = true;
